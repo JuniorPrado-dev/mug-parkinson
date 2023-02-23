@@ -1,11 +1,3 @@
-/*
- *   CÓDIGO:  Q0517
- *   AUTOR:   BrincandoComIdeias
- *   LINK:    https://www.youtube.com/brincandocomideias ; https://cursodearduino.net/
- *   COMPRE:  https://www.arducore.com.br/
- *   SKETCH:  MPU6050 - Módulos para Arduino
- *   DATA:    04/09/2019
-*/
 
 // INCLUSÃO DE BIBLIOTECAS
 #include <MPU6050_tockn.h>
