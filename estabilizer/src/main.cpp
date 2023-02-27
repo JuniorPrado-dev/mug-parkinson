@@ -1,55 +1,54 @@
-#include <Adafruit_MPU6050.h>
-#include <Adafruit_Sensor.h>
+
+#include <MPU6050_tockn.h>
 #include <Wire.h>
 #include <Servo.h>
+Servo servoX, servoY, servoZ;
+MPU6050 mpu6050(Wire);
 
-Servo servo;
-Adafruit_MPU6050 comunic;
-
-void setup(void) {
-//Inicia o monitor serial
-  Serial.begin(115200);
-// Setando o PIN do servo
-  servo.attach(5);
-//Iniciando a biblioteca "Wire"
+void setup() {
+  Serial.begin(9600);
   Wire.begin();
-//Iniciando a MPU6050
-  comunic.begin();
-// Setando a posição incial do servo para 0
-  servo.write(0);
-
-//Setando o range do acelerômetro e giroscópio
-  comunic.setAccelerometerRange(MPU6050_RANGE_8_G);//2_G,4_G,8_G,16_G
-  comunic.setGyroRange(MPU6050_RANGE_500_DEG);//250,500,1000,2000
-  comunic.setFilterBandwidth(MPU6050_BAND_21_HZ);
-
-  delay(100);
+  mpu6050.begin();
+  mpu6050.calcGyroOffsets(true);
+  
+  servoX.attach(5);
+  servoY.attach(6);
+  servoZ.attach(7);
+  
+  servoX.write(0);
+  servoY.write(0);
+  servoZ.write(0);
 }
 
 void loop() {
+  mpu6050.update();
 
-/*Declara as variáveis "a", "g" e "temp" do tipo "sensors_event_t" que armazenarão 
-os valores de aceleração, velocidade angular e temperatura, respectivamente.*/
-  sensors_event_t a, g, temp;
-  
-/* Chama o método "getEvent" do objeto "comunic" e passa os endereços de memória das variáveis 
-"a", "g" e "temp" como parâmetros para obter os valores atualizados do sensor.*/  
-  comunic.getEvent(&a, &g, &temp);
+  float valorSensorX = mpu6050.getAngleX();
+  float valorSensorY = mpu6050.getAngleY();
+  float valorSensorZ = mpu6050.getAngleZ();
 
-/*Obtém o valor de aceleração no eixo Y a partir da variável "a" 
- e armazena na variável "valor".*/
-  int valor = a.acceleration.y;
+  int valorServoX = map(valorSensorX,  -90, 90, 180, 0);
+  int valorServoY = map(valorSensorY,  -90, 90, 180, 0);
+  int valorServoZ = map(valorSensorZ,  -90, 90, 180, 0);
 
+  servoX.write(valorServoX);
+  servoY.write(valorServoY);
+  servoZ.write(valorServoZ);
 /*
- * Mapeia o valor da variável "valor" de uma faixa de -10 a 10 para uma faixa de 180 a 0, 
- * ou seja, converte o valor de aceleração para um ângulo de rotação do servo motor.
- */
-  valor = map(valor,  -10, 10, 180, 0);
+  Serial.print("angulo X: ");
+  Serial.print(valorSensorX);
+  Serial.print("  \tangulo Y: ");
+  Serial.print(valorSensorY);
+  Serial.print("  \tangulo Z: ");
+  Serial.println(valorSensorZ);
+*/ 
+///*
+  Serial.print("Servo X: ");
+  Serial.print(valorServoX);
+  Serial.print("  \tServo Y: ");
+  Serial.print(valorServoY);
+  Serial.print("  \tServo Z: ");
+  Serial.println(valorServoZ); 
+//*/
   
-//Seta o movimento do servo
-  servo.write(valor);
-  
-// Printa "valor" no serial 
-  Serial.println(valor);
-  //delay(10);
 }
