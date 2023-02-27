@@ -4,6 +4,7 @@
 #include <Servo.h>
 Servo servoX, servoY, servoZ;
 MPU6050 mpu6050(Wire);
+//...
 
 void setup() {
   Serial.begin(9600);
